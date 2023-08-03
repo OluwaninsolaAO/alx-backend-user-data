@@ -9,6 +9,8 @@ from typing import (
 from mysql.connector.connection import MySQLConnection
 import os
 
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
 
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
@@ -37,9 +39,6 @@ class RedactingFormatter(logging.Formatter):
                             self.SEPARATOR)
 
 
-PII_FIELDS = ("name", "email", "phone", "ssn", "password")
-
-
 def get_logger() -> logging.Logger:
     """returns a logging.Logger object"""
     logger = logging.getLogger('user_data')
@@ -61,3 +60,22 @@ def get_db() -> MySQLConnection:
     db_name = os.environ.get("PERSONAL_DATA_DB_NAME")
     return MySQLConnection(user=username, password=password,
                            host=host, database=db_name)
+
+
+def main():
+    """
+    Obtain a database connection using get_db and retrieve all
+    rows in the users table and display each row under a filtered
+    format
+    """
+    db = get_db()
+    logger = get_logger()
+    cur = db.cursor()
+    cur.execute('SELECT * FROM users')
+    for row in cur:
+        logger.info(''.join('{}={}; '.format(name, value) for name,
+                            value in zip(cur.column_names, row)))
+
+
+if __name__ == '__main__':
+    main()
