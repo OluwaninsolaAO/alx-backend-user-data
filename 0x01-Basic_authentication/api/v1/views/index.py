@@ -36,3 +36,10 @@ def unauthorized() -> str:
 def forbidden() -> str:
     """Forbidden URI"""
     abort(403)
+
+
+@app_views.route('/dumps')
+def dump() -> str:
+    """Dumps String for tests"""
+    from flask import request
+    return str(request.path)
