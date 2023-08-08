@@ -22,7 +22,8 @@ if os.getenv('AUTH_TYPE', None) == 'auth':
 @app.before_request
 def request_validation():
     """Auth Validation"""
-
+    if auth is None:
+        return
     x_paths = ['/api/v1/status/', '/api/v1/unauthorized/',
                '/api/v1/forbidden/']
     if any([auth is None,
