@@ -23,7 +23,9 @@ class Auth:
 
     def authorization_header(self, request=None) -> str:
         """authorization_header public method"""
-        if any([request is None, request.authorization is None]):
+        if request is None:
+            return None
+        if request.authorization is None:
             return None
         return request.authorization
 
