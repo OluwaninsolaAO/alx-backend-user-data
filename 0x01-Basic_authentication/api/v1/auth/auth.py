@@ -27,7 +27,7 @@ class Auth:
             return None
         if request.authorization is None:
             return None
-        return request.authorization
+        return str(request.authorization)
 
     def current_user(self, request=None) -> TypeVar('User'):
         """current_user public method"""
