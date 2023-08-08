@@ -26,7 +26,7 @@ def request_validation():
                '/api/v1/forbidden/']
     if auth is None:
         return
-    if not auth.require_auth(request.path, x_paths):
+    if auth.require_auth(request.path, x_paths) is False:
         return
     if auth.authorization_header(request) is None:
         abort(401)
