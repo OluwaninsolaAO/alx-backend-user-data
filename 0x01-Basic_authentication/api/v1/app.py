@@ -34,9 +34,9 @@ def request_validation():
     if auth.require_auth(request.path, x_paths) is False:
         return
     if auth.authorization_header(request) is None:
-        abort(401)
-    if auth.current_user(request) is None:
         abort(403)
+    if auth.current_user(request) is None:
+        abort(401)
 
 
 @app.errorhandler(404)
