@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """3. Auth class Definition"""
-from flask import request
 from typing import (
     List,
     TypeVar
