@@ -15,3 +15,9 @@ class SessionAuth(Auth):
         session_id = uuid4().__str__()
         self.user_id_by_session_id.update({session_id: user_id})
         return session_id
+
+    def user_id_for_session_id(self, session_id: str = None) -> str:
+        """Returns user_id based associated with the session_id"""
+        if any([session_id is None, not isinstance(session_id, str)]):
+            return None
+        return self.user_id_by_session_id.get(session_id, None)
