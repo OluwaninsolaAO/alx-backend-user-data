@@ -4,6 +4,10 @@ from typing import (
     List,
     TypeVar
 )
+import os
+
+
+SESSION_NAME = os.getenv('SESSION_NAME')
 
 
 class Auth:
@@ -31,3 +35,9 @@ class Auth:
     def current_user(self, request=None) -> TypeVar('User'):
         """current_user public method"""
         return None
+
+    def session_cookie(self, request=None):
+        """Returns a cookie based on value from request"""
+        if request is None:
+            return None
+        return request.cookies.get(SESSION_NAME, None)
