@@ -3,7 +3,7 @@
 
 from flask import (
     Flask, jsonify, request,
-    abort, make_response)
+    abort, make_response, redirect, url_for)
 from auth import Auth
 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ app.url_map.strict_slashes = False
 AUTH = Auth()
 
 
-@app.route('/me', methods=['GET'])
+@app.route('/', methods=['GET'])
 def index_page() -> str:
     """6. Basic Flask app"""
     return jsonify({"message": "Bienvenue"})
@@ -54,6 +54,16 @@ def login():
         resp.set_cookie('session_id', session_id)
         return resp
     abort(401)
+
+
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """The Red Pill: Exit the Matrix"""
+    session_id = request.cookies.get('session_id', None)
+    if not AUTH.get_user_from_session_id(session_id):
+        abort(403)
+    AUTH.destroy_session(session_id)
+    return redirect(url_for('index_page'))
 
 
 if __name__ == "__main__":
