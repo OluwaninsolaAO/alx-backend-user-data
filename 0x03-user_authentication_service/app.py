@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """A simple python flask application module"""
 
-from flask import Flask, jsonify, request
+from flask import (
+    Flask, jsonify, request,
+    abort, make_response)
 from auth import Auth
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 AUTH = Auth()
 
 
-@app.route('/', methods=['GET'], strict_slashes=False)
+@app.route('/me', methods=['GET'])
 def index_page() -> str:
     """6. Basic Flask app"""
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route('/users', methods=['POST'], strict_slashes=False)
+@app.route('/users', methods=['POST'])
 def user() -> str:
     """Create new user in database"""
     attrs = ['email', 'password']
@@ -30,6 +33,27 @@ def user() -> str:
                         "message": "user created"}), 201
     except ValueError:
         return jsonify({"message": "email already registered"}), 400
+
+
+@app.route('/sessions', methods=['POST'])
+def login():
+    """The mines of Moria: Simply Login"""
+    attrs = ['email', 'password']
+    data = {}
+    for attr in attrs:
+        if attr in request.form:
+            data.update({attr: request.form.get(attr)})
+        else:
+            return jsonify({"message": "Bad request!"}), 400
+    if AUTH.valid_login(**data):
+        session_id = AUTH.create_session(data.get('email'))
+        resp = make_response(
+            jsonify({"email": data.get('email'),
+                     "message": "logged in"})
+        )
+        resp.set_cookie('session_id', session_id)
+        return resp
+    abort(401)
 
 
 if __name__ == "__main__":
