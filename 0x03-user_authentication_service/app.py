@@ -76,5 +76,25 @@ def profile():
     return jsonify({"email": user.email})
 
 
+@app.route('/reset_password', methods=['POST'])
+def get_reset_password_token():
+    """You want back in to the Matrix?"""
+    attrs = ['email']
+    data = {}
+    for attr in attrs:
+        if attr in request.form:
+            data.update({attr: request.form.get(attr)})
+        else:
+            return jsonify({"message": "Bad request!"}), 400
+    try:
+        reset_token = AUTH.get_reset_password_token(
+            email=data.get('email')
+        )
+        return jsonify({"email": data.get('email'),
+                        "reset_token": reset_token})
+    except ValueError:
+        abort(403)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
